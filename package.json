@@ -7,15 +7,19 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "compression": "^1.7.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "source-map-explorer": "^2.4.2"
   },
   "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "concurrently \"npm run client\" \"npm run server\"",
     "client": "react-scripts start",
-    "server": "nodemon src/server",
-    "build": "concurrently \"react-scripts build\" \"npm run server\"",
+    "server": "node src/server",
+    "build": "react-scripts build",
+    "serve": "npm run build && node src/server",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

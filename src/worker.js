@@ -45,7 +45,6 @@ export function register(config) {
             "This web app is being served cache-first by a service " +
               "worker. To learn more, visit https://bit.ly/CRA-PWA"
           );
-          console.log(doStuff);
         });
       } else {
         // Is not localhost. Just register service worker
@@ -53,10 +52,6 @@ export function register(config) {
       }
     });
   }
-}
-
-function doStuff() {
-  console.log("doStuff...");
 }
 
 function registerValidSW(swUrl, config) {
