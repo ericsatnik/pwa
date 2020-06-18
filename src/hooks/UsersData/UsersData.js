@@ -21,9 +21,10 @@ export const UsersData = () => {
             console.log("users", users);
             setUsersData(users);
             setIsLoadingUsers(false);
+            setUsersError(null);
           });
       } catch (e) {
-        setUsersError(e);
+        setUsersError(e.message);
         setIsLoadingUsers(false);
       }
     };
@@ -36,8 +37,9 @@ export const UsersData = () => {
         await db.table("users").clear();
         await db.table("users").bulkPut(users);
         setIsLoadingUsers(false);
+        setUsersError(null);
       } catch (e) {
-        setUsersError(e);
+        setUsersError(e.message);
         setIsLoadingUsers(false);
       }
     };
@@ -55,6 +57,7 @@ export const UsersData = () => {
             console.log("users", users);
             setUsersData(users);
             setUsersError(null);
+            setIsLoadingUsers(false);
           }, 300);
         } catch (e) {
           setUsersError(e.message);
@@ -65,6 +68,9 @@ export const UsersData = () => {
 
     // fetch users from indexedDB and update UI, then, if online, fetch users from API, put users into indexedDB (clears previous results), update UI
     fetchCachedUsersAndUpdate().then(() => {
+      if (!navigator.onLine) {
+        console.log("Cannot refresh data while offline");
+      }
       refreshAndUpdateUsers();
     });
   }, []);

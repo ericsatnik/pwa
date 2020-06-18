@@ -1,9 +1,8 @@
 import React from "react";
-import { Spinner } from "../Spinner/Spinner";
 
 export const UsersList = ({ usersError, usersData, isLoadingUsers }) => (
   <>
-    {!!isLoadingUsers && <Spinner />}
+    {!!isLoadingUsers && <p>Loading...</p>}
     {!!usersError && <p>{usersError}</p>}
     {!!usersData && usersData.length === 0 && !isLoadingUsers && (
       <div>
