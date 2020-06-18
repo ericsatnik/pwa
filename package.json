@@ -18,7 +18,7 @@
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "concurrently \"npm run client\" \"npm run server\"",
     "client": "react-scripts start",
-    "server": "nodemon src/server",
+    "server": "npm run build && nodemon src/server",
     "build": "react-scripts build",
     "serve": "npm run build && node src/server",
     "test": "react-scripts test",

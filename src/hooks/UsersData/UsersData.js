@@ -12,17 +12,13 @@ export const UsersData = () => {
     const fetchCachedUsersAndUpdate = async () => {
       try {
         setIsLoadingUsers(true);
-        console.log("fetch users from indexedDB");
-        await db
-          .table("users")
-          .toArray()
-          .then((users) => {
-            console.log("update UI");
-            console.log("users", users);
-            setUsersData(users);
-            setIsLoadingUsers(false);
-            setUsersError(null);
-          });
+        // fetch users from indexedDB
+        const cachedUsers = await db.table("users").toArray();
+        // update UI
+        setUsersData(cachedUsers);
+        setIsLoadingUsers(false);
+        setUsersError(null);
+        return cachedUsers;
       } catch (e) {
         setUsersError(e.message);
         setIsLoadingUsers(false);
@@ -32,7 +28,7 @@ export const UsersData = () => {
     const bulkPutUsers = async (users = []) => {
       try {
         setIsLoadingUsers(true);
-        console.log("put fresh users into indexedDB (clears previous results)");
+        // put fresh users into indexedDB (clears previous results)
         console.log("users", users);
         await db.table("users").clear();
         await db.table("users").bulkPut(users);
@@ -44,34 +40,44 @@ export const UsersData = () => {
       }
     };
 
-    const refreshAndUpdateUsers = async () => {
+    const refreshAndUpdateUsers = async (cachedUsers) => {
+      if (!navigator.onLine) {
+        //Cannot refresh data while offline
+      }
+      if (cachedUsers.length === 0) {
+        // only show loading when there are no cached users
+        setIsLoadingUsers(true);
+      }
       if (navigator.onLine) {
         try {
-          setIsLoadingUsers(true);
-          console.log("Refresh users from API");
+          // Refresh users from API
           const response = await fetch("users");
           const users = await response.json();
           setTimeout(() => {
             bulkPutUsers(users);
-            console.log("update UI");
-            console.log("users", users);
+            // update UI
             setUsersData(users);
             setUsersError(null);
             setIsLoadingUsers(false);
-          }, 300);
+          }, 1000);
         } catch (e) {
-          setUsersError(e.message);
+          // app should fallback to cached data when server is unavailable
+          const prodFailSafe = cachedUsers && e.message === "Failed to fetch";
+          const devFailSafe =
+            cachedUsers &&
+            e.message === "Unexpected token P in JSON at position 0";
+          const failSafe = prodFailSafe || devFailSafe;
+          if (!failSafe) {
+            setUsersError(e.message);
+          }
           setIsLoadingUsers(false);
         }
       }
     };
 
     // fetch users from indexedDB and update UI, then, if online, fetch users from API, put users into indexedDB (clears previous results), update UI
-    fetchCachedUsersAndUpdate().then(() => {
-      if (!navigator.onLine) {
-        console.log("Cannot refresh data while offline");
-      }
-      refreshAndUpdateUsers();
+    fetchCachedUsersAndUpdate().then((cachedUsers) => {
+      refreshAndUpdateUsers(cachedUsers);
     });
   }, []);
 

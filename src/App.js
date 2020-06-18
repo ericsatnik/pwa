@@ -25,10 +25,6 @@ function App() {
         <br />
       </header>
       <main className="App-main">
-        <div>
-          <pre>usersError: {JSON.stringify(usersError, null, 2)}</pre>
-          <pre>isLoadingUsers: {JSON.stringify(isLoadingUsers, null, 2)}</pre>
-        </div>
         <UsersList
           usersError={usersError}
           usersData={usersData}
